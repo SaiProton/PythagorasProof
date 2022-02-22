@@ -15,8 +15,11 @@ class Pythag(Scene):
 
     def plane(self):
         self.fw = config['frame_width']
+
+        # each unit of the plane is 1/8th of the frame's width
         self.unit = self.fw / 8
 
+        # initialize a number plane for a clear sense of scale
         self.number_plane = NumberPlane(
             x_range=[-self.box_scale, self.box_scale, 1],
             y_range=[-self.box_scale, self.box_scale, 1],
@@ -40,6 +43,9 @@ class Pythag(Scene):
         self.scale = 2
 
         self.add(self.number_plane)
+        self.wait(0.5)
+
+        # zoom into the 3rd quadrant area of the plane
         self.play(
             self.number_plane.animate
             .scale(self.scale)
@@ -62,10 +68,12 @@ class Pythag(Scene):
 
         self.play(
             DrawBorderThenFill(self.tri1),
-            run_time=2
+            run_time=3
         )
 
         self.wait(0.5)
+
+        # braces and labels for each of the sides of the triangle
 
         brace_down = Brace(self.tri1, buff=0.5, direction=DOWN)
         brace_left = Brace(self.tri1, buff=0.5, direction=LEFT)
@@ -88,6 +96,7 @@ class Pythag(Scene):
 
         label_hyp = brace_hyp.get_text('?').scale(2).set_color(YELLOW_D)
 
+        # orange line to highlight the hypotonuse of the triangle
         self.hyp_line = Line(
             [0, self.unit * self.scale * 3, 0],
             [self.unit * self.scale * 3, 0, 0],
@@ -116,6 +125,7 @@ class Pythag(Scene):
         self.wait(0.5)
 
     def multi_triangle(self):
+        # zoom out the plane and center it
         self.play(
             self.number_plane.animate
             .scale(0.5)
@@ -125,6 +135,8 @@ class Pythag(Scene):
             .scale(0.5)
             .move_to([self.unit * -1.5, self.unit * -1.5, 0]),
         )
+
+        # creating copies of the triangle and rotating into new positions
 
         self.tri2 = self.tri1.copy()
         self.play(
@@ -142,8 +154,7 @@ class Pythag(Scene):
                 -180 * DEGREES,
                 about_point=ORIGIN,
                 rate_func=rate_functions.ease_out_elastic,
-            ),
-            run_time=1
+            )
         )
 
         self.tri4 = self.tri3.copy()
@@ -158,6 +169,7 @@ class Pythag(Scene):
         self.wait(0.5)
 
     def box_proof1(self):
+        # form a red box surrounding the area of 4 units^2
         self.big_box = Square(
             self.unit * 6,
             color=RED,
@@ -169,6 +181,7 @@ class Pythag(Scene):
 
         self.play(FadeIn(self.big_box), run_time=1)
 
+        # area of red squares before evaluation
         square_text1 = MathTex('1^2').move_to(
             [self.unit * -1.5, self.unit * 1.5, 0]
         ).scale(3)
@@ -177,6 +190,7 @@ class Pythag(Scene):
             [self.unit * 1.5, self.unit * -1.5, 0]
         ).scale(3)
 
+        # area of red squares after evaluation
         square_text1_eval = MathTex('1').move_to(
             [self.unit * -1.5, self.unit * 1.5, 0]
         ).scale(4)
@@ -194,15 +208,14 @@ class Pythag(Scene):
             Transform(square_text2, square_text2_eval)
         )
 
-        # self.remove(square_text1, square_text2)
-
-        self.wait(0.5)
+        self.wait(1)
 
         self.play(Unwrite(square_text1), Unwrite(square_text2))
 
         self.wait(1)
 
     def box_proof2(self):
+        # rotating two triangles to form a big square in the center
         self.play(
             Rotate(
                 self.tri2,
@@ -223,6 +236,7 @@ class Pythag(Scene):
 
         self.wait(0.5)
 
+        # equation in progressing states of evaluation
         self.square_text = MathTex('1^2 + 1^2').scale(4)
         square_text_eval1 = MathTex('1 + 1').scale(4)
         square_text_eval2 = MathTex('2').scale(5)
@@ -237,10 +251,14 @@ class Pythag(Scene):
         self.wait(1)
 
     def root2(self):
+        # hyp of triangle
         offset = sqrt(2 * 1.5**2)
 
+        # vertical addition before rotation
         addition = 2
 
+        # rotating each Mobject currently on the screen during the end scene
+        # everything but the beginning triangle is set to disappear
         self.play(
             self.tri1.animate
             .move_to([0, self.unit * (-offset + addition), 0])
@@ -286,7 +304,7 @@ class Pythag(Scene):
 
         brace = Brace(self.tri1, direction=UP, buff=0.5, fill_color=ORANGE)
 
-        thing = (
+        root = (
             brace.get_tex('\sqrt{2}')
             .set_color(YELLOW_D)
             .scale(2)
@@ -294,7 +312,7 @@ class Pythag(Scene):
         )
 
         self.play(Write(brace))
-        self.play(Transform(self.square_text, thing))
+        self.play(Transform(self.square_text, root))
 
-        self.wait(3)
+        self.wait(5)
 
